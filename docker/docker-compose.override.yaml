@@ -1,0 +1,25 @@
+services:
+  redis:
+    network_mode: host
+    networks: !reset []
+  gateway:
+    network_mode: host
+    networks: !reset []
+    depends_on: !reset {}
+  frontend:
+    network_mode: host
+    networks: !reset []
+    environment:
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+      - DEER_FLOW_INTERNAL_GATEWAY_BASE_URL=http://127.0.0.1:8001
+  nginx:
+    network_mode: host
+    networks: !reset []
+    ports: !reset []
+    depends_on: !reset {}
+    volumes: !override
+      - ./nginx/nginx.local.conf:/etc/nginx/nginx.conf:ro
+    entrypoint: !override ["/bin/sh", "-c"]
+    command: !override ["mkdir -p /etc/nginx/logs && exec nginx -g 'daemon off;'"]
+  provisioner:
+    profiles: ["disabled"]
